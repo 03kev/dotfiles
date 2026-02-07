@@ -1,0 +1,413 @@
+let mapleader = " "
+
+" ============================================================================
+" Basic Settings
+" ============================================================================
+set number
+set relativenumber
+set ignorecase
+set smartcase
+set incsearch
+set hlsearch
+set scrolloff=8
+
+" ============================================================================
+" Extensions
+" ============================================================================
+set surround
+set multiple-cursors
+set commentary
+set highlightedyank
+set ideajoin
+set idearefactormode=keep
+set NERDTree
+
+set which-key
+set notimeout
+" let g:WhichKey_ShowVimActions = "true"
+
+set easymotion
+let g:WhichKeyDesc_easymotion = "m [ EasyMotion ]"
+map mc <Plug>(easymotion-bd-f)
+let g:WhichKeyDesc_easymotion_char = "mc Jump to character"
+map mw <Plug>(easymotion-bd-w)
+let g:WhichKeyDesc_easymotion_word = "mw Jump to word"
+map ml <Plug>(easymotion-bd-jk)
+let g:WhichKeyDesc_easymotion_line = "ml Jump to line"
+map me <Plug>(easymotion-bd-e)
+let g:WhichKeyDesc_easymotion_endword = "me Jump to end of word"
+
+nnoremap <leader><leader>r :action IdeaVim.ReloadVimRc.reload<CR>
+let g:WhichKeyDesc_reload_vimrc = "<leader><leader>r Reload .ideavimrc"
+
+" ============================================================================
+" Disable clipboard sync (forza registri separati)
+" ============================================================================
+
+" Yank normale va SOLO nel registro vim (non sistema)
+nnoremap y ""y
+vnoremap y ""y
+nnoremap yy ""yy
+nnoremap Y ""y$
+
+" Delete normale va SOLO nel registro vim (non sistema)
+nnoremap d ""d
+vnoremap d ""d
+nnoremap dd ""dd
+nnoremap D ""D
+
+" Change normale va SOLO nel registro vim (non sistema)
+nnoremap c ""c
+vnoremap c ""c
+nnoremap cc ""cc
+nnoremap C ""C
+
+" x normale va SOLO nel registro vim (non sistema)
+nnoremap x ""x
+vnoremap x ""x
+
+" Paste dal registro vim (non sistema)
+nnoremap p ""p
+nnoremap P ""P
+vnoremap p ""p
+vnoremap P ""P
+
+" ============================================================================
+" System Clipboard - ESPLICITO con +
+" ============================================================================
+
+nnoremap <S-y> "+y
+vnoremap <S-y> "+y
+nnoremap <S-p> "+p
+vnoremap <S-p> "+p
+
+" ============================================================================
+" Delete without yanking (black hole register)
+" ============================================================================
+nnoremap <leader>d "_d
+let g:WhichKeyDesc_delete_no_yank = "<leader>d Delete without yanking"
+vnoremap <leader>d "_d
+let g:WhichKeyDesc_delete_visual_no_yank = "<leader>d Delete selection without yanking"
+
+" ============================================================================
+" Paste replace senza perdere registro
+" ============================================================================
+" Paste in visual mode senza yanking la selezione
+xnoremap p "_d""P
+xnoremap <leader>p "_d""P
+
+" Paste FROM system in visual mode
+xnoremap <S-p> "_d"+P
+
+
+" ============================================================================
+" Clear search highlights
+" ============================================================================
+nnoremap <leader>nh :let @/ = ""<Bar>nohlsearch<CR>
+let g:WhichKeyDesc_no_highlight = "<leader>nh Clear search highlights"
+
+" ============================================================================
+" Select all
+" ============================================================================
+nnoremap <C-a> ggVG$
+inoremap <C-a> <Esc>ggVG$
+
+" ============================================================================
+" Move lines
+" ============================================================================
+
+" Move line up/down in normal mode
+nnoremap <S-A-i> :action MoveLineUp<CR>
+nnoremap <S-A-u> :action MoveLineDown<CR>
+
+" Move selection up/down in visual mode
+vnoremap <S-A-i> :action MoveLineUp<CR>
+vnoremap <S-A-u> :action MoveLineDown<CR>
+
+" ============================================================================
+" Tab Management
+" ============================================================================
+nnoremap <C-c> :action CloseContent<CR>
+nnoremap <leader>hh :action HideAllWindows<CR>
+
+let g:WhichKeyDesc_tab_management = "<leader>t [ Tab Management ]"
+
+nnoremap <leader>tr :action RecentLocations<CR>
+let g:WhichKeyDesc_recent_locations = "<leader>tr Recent Locations"
+
+nnoremap ]t :action NextTab<CR>
+let g:WhichKeyDesc_next_tab = "]t Go to Next Tab"
+nnoremap [t :action PreviousTab<CR>
+let g:WhichKeyDesc_previous_tab = "[t Go to Previous Tab"
+nnoremap <leader>tm :action MoveEditorToOppositeTabGroup<CR>
+let g:WhichKeyDesc_move_tab_opposite = "<leader>tm Move Tab to Opposite Group"
+nnoremap <leader>tc :action CloseAllEditorsButActive<CR>
+let g:WhichKeyDesc_close_other_tabs = "<leader>tc Close All Other Tabs in split"
+
+" Move to tab by number
+nnoremap <A-1> :action GoToTab1<CR>
+nnoremap <A-2> :action GoToTab2<CR>
+nnoremap <A-3> :action GoToTab3<CR>
+nnoremap <A-4> :action GoToTab4<CR>
+nnoremap <A-5> :action GoToTab5<CR>
+nnoremap <A-6> :action GoToTab6<CR>
+nnoremap <A-7> :action GoToTab7<CR>
+nnoremap <A-8> :action GoToTab8<CR>
+nnoremap <A-9> :action GoToTab9<CR>
+
+" ============================================================================
+" New files
+" ============================================================================
+
+nnoremap <leader>nf :action NewElement<CR>
+let g:WhichKeyDesc_new_file = "<leader>nf New Preconfigured File"
+nnoremap <leader>ne :action NewFile<CR>
+let g:WhichKeyDesc_new_empty_file = "<leader>ne New Empty File"
+nnoremap <leader>tb :action NewScratchBuffer<CR>
+let g:WhichKeyDesc_new_scratch_buffer = "<leader>tb New Scratch Buffer"
+
+
+" ============================================================================
+" Add line in normal mode
+" ============================================================================
+nnoremap gO O<Esc>j
+let g:WhichKeyDesc_add_line_above = "gO Add line above"
+nnoremap go o<Esc>k
+let g:WhichKeyDesc_add_line_below = "go Add line below"
+
+" ============================================================================
+" Select last pasted text
+" ============================================================================
+nnoremap gp `[v`]
+let g:WhichKeyDesc_select_pasted = "gp Select last pasted text"
+
+" ============================================================================
+" Text Navigation
+" ============================================================================
+" nnoremap J jj
+" nnoremap K kk
+
+" ============================================================================
+" Redo with Shift+U
+" ============================================================================
+nnoremap <S-u> <C-r>
+let g:WhichKeyDesc_redo = "<S-u> Redo"
+let g:WhichKeyDesc_undo = "u Undo"
+
+" ============================================================================
+" Refactorings
+" ============================================================================
+
+let g:WhichKeyDesc_refactor = "\\r [ Refactor ]"
+
+nnoremap \rR :action RenameElement<CR>
+let g:WhichKeyDesc_rename = "\\rR Rename Element"
+
+vnoremap \rt :action Refactorings.QuickListPopupAction<CR>
+nnoremap \rt :action Refactorings.QuickListPopupAction<CR>
+let g:WhichKeyDesc_refactor_list = "\\rt Refactor this..."
+
+vnoremap \rme :action ExtractMethod<CR>
+nnoremap \rme :action ExtractMethod<CR>
+xnoremap \rme :action ExtractMethod<CR>
+let g:WhichKeyDesc_refactor_method_extract = "\\rme Extract Method"
+
+let g:WhichKeyDesc_refactor_method = "\\rm [ Methods ]"
+nnoremap \rmo :action OverrideMethods<CR>
+let g:WhichKeyDesc_refactor_method_override = "\\rmo Override Methods"
+nnoremap \rmi :action ImplementMethods<CR>
+let g:WhichKeyDesc_refactor_method_implement = "\\rmi Implement Methods"
+nnoremap \rmg :action Generate<CR>
+let g:WhichKeyDesc_refactor_method_generate = "\\rmg Generate..."
+
+vnoremap \rsw :action SurroundWith<CR>
+xnoremap \rsw :action SurroundWith<CR>
+let g:WhichKeyDesc_refactor_surround = "\\rsw Surround With"
+
+" Intentions Actions, cmd+.
+nnoremap \rr :action ShowIntentionActions<CR>
+let g:WhichKeyDesc_intentions = "\\rr Show Intentions Actions"
+
+
+
+" ============================================================================
+" Split Navigation
+" ============================================================================
+
+" needed due to karabiner ctrl+hjkl rule in whole system
+nnoremap <Left> <C-w>h
+nnoremap <Down> <C-w>j
+nnoremap <Up> <C-w>k
+nnoremap <Right> <C-w>l
+
+" split navigation
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" split screen
+nnoremap <A-h> :action SplitVertically<CR><C-w>h
+nnoremap <A-l> :action SplitVertically<CR>
+nnoremap <A-j> :action SplitHorizontally<CR>
+nnoremap <A-k> :action SplitHorizontally<CR><C-w>k
+
+" Resize splits
+nnoremap <C-A-h> :action StretchSplitToLeft<CR>
+nnoremap <C-A-l> :action StretchSplitToRight<CR>
+nnoremap <C-A-j> :action StretchSplitToBottom<CR>
+nnoremap <C-A-k> :action StretchSplitToTop<CR>
+
+nnoremap <C-q>b <C-w>c
+let g:WhichKeyDesc_close_split = "<C-q>b Close current split"
+nnoremap <C-q>p :action HideActiveWindow<CR>
+let g:WhichKeyDesc_hide_split = "<C-q>p Hide previous external panel"
+
+" ============================================================================
+" File Explorer
+" ============================================================================
+nnoremap <leader>ee :action ActivateProjectToolWindow<CR>
+let g:WhichKeyDesc_project_window = "<leader>ee Open Project Explorer" 
+nnoremap <leader>et :NERDTreeToggle<CR>
+let g:WhichKeyDesc_project_toggle = "<leader>et Toggle Project Explorer"
+nnoremap <leader>ef :NERDTreeFind<CR>
+let g:WhichKeyDesc_find_in_tree = "<leader>ef Find file in Project Explorer"
+
+" ============================================================================
+" Terminal
+" ============================================================================
+nnoremap <leader>tt :action ActivateTerminalToolWindow<CR>
+let g:WhichKeyDesc_terminal_window = "<leader>tt Open Terminal Window"
+
+" ============================================================================
+" LSP-like features
+" ============================================================================
+
+let g:WhichKeyDesc_lsp_features = "\\\g [ LSP Features ]"
+
+nnoremap \gd :action GotoDeclaration<CR>
+let g:WhichKeyDesc_go_to_declaration = "\\gd Go to Declaration"
+nnoremap \gD :action GotoTypeDeclaration<CR>
+let g:WhichKeyDesc_go_to_type_declaration = "\\gD Go to Type Declaration"
+nnoremap \gi :action GotoImplementation<CR>
+let g:WhichKeyDesc_go_to_implementation = "\\gi Go to Implementation"
+nnoremap \gU :action FindUsages<CR>
+let g:WhichKeyDesc_find_usages = "\\gU Find Usages"
+nnoremap \gu :action ShowUsages<CR>
+let g:WhichKeyDesc_show_usages = "\\gu Show Usages"
+nnoremap \gj :action QuickJavaDoc<CR>
+let g:WhichKeyDesc_quick_javadoc = "\\gj Quick JavaDoc"
+
+nnoremap \gp :action ParameterInfo<CR>
+let g:WhichKeyDesc_parameter_info = "\\gp Show Parameter Info"
+
+" Diagnostics
+nnoremap [d :action GotoPreviousError<CR>
+let g:WhichKeyDesc_previous_error = "[d Go to Previous Error"
+nnoremap ]d :action GotoNextError<CR>
+let g:WhichKeyDesc_next_error = "]d Go to Next Error"
+
+" ============================================================================
+" Fuzzy Finding
+" ============================================================================
+let g:WhichKeyDesc_fuzzy_finding = "<leader>f [ Fuzzy Finding ]"
+
+let g:WhichKeyDesc_fuzzy_file = "<leader>ff Find File"
+let g:WhichKeyDesc_fuzzy_path = "<leader>fp Find in Path"
+let g:WhichKeyDesc_fuzzy_recent = "<leader>fr Recent Files"
+let g:WhichKeyDesc_fuzzy_class = "<leader>fc Find Class"
+let g:WhichKeyDesc_fuzzy_symbol = "<leader>fs Find Symbol"
+let g:WhichKeyDesc_fuzzy_text = "<leader>ft Find Text"
+let g:WhichKeyDesc_fuzzy_action = "<leader>fa Find Action"
+
+nnoremap <leader>ff :action GotoFile<CR>
+nnoremap <leader>fp :action FindInPath<CR>
+nnoremap <leader>fr :action RecentFiles<CR>
+nnoremap <leader>fc :action GotoClass<CR>
+nnoremap <leader>fs :action GotoSymbol<CR>
+nnoremap <leader>ft :action TextSearchAction<CR>
+
+nnoremap <leader>fa :action GotoAction<CR>
+vnoremap <leader>fa :action GotoAction<CR>
+
+
+" ============================================================================
+" Git
+" ============================================================================
+
+let g:WhichKeyDesc_git_prefix = "<leader>g [ Git ]"
+
+nnoremap <leader>gg :action ActivateVersionControlToolWindow<CR>
+let g:WhichKeyDesc_git_window = "<leader>gg Open Git Window"
+nnoremap <leader>gb :action Git.Branches<CR>
+let g:WhichKeyDesc_git_branches = "<leader>gb Git Branches"
+nnoremap <leader>gc :action CheckinProject<CR>
+let g:WhichKeyDesc_git_commit = "<leader>gc Git Commit"
+nnoremap <leader>gp :action Vcs.Push<CR>
+let g:WhichKeyDesc_git_push = "<leader>gp Git Push"
+
+
+" ============================================================================
+" Additional useful mappings
+" ============================================================================
+
+" Format code
+nnoremap <leader>fi :action ReformatCode<CR>
+let g:WhichKeyDesc_format_code = "<leader>fi Format Code"
+
+" Optimize imports
+nnoremap <leader>oi :action OptimizeImports<CR>
+let g:WhichKeyDesc_optimize_imports = "<leader>oi Optimize Imports"
+
+" Show structure
+nnoremap <leader>ss :action FileStructurePopup<CR>
+let g:WhichKeyDesc_show_structure = "<leader>ss Show File Structure"
+
+nnoremap <C-o> :action Back<CR>
+nnoremap <C-i> :action Forward<CR>
+
+nnoremap \a :action SelectAllOccurrences<CR>
+vnoremap \a :action SelectAllOccurrences<CR>
+let g:WhichKeyDesc_select_all_occurrences = "\a Select All Occurrences of current word"
+
+" ============================================================================
+" GitHub Copilot
+" ============================================================================
+
+nnoremap <leader>cc :action copilot.chat.show<CR>
+let g:WhichKeyDesc_copilot_chat_show = "<leader>cc Open Copilot Chat"
+nnoremap <leader>cq :action copilot.quotaUsage<CR>
+let g:WhichKeyDesc_copilot_quota_usage = "<leader>cq Show Copilot Quota Usage"
+nnoremap <leader>cs :action copilot.openStatus<CR>
+let g:WhichKeyDesc_copilot_open_status = "<leader>cs Open Copilot Status"
+nnoremap <leader>ci a<C-o>:action CallInlineCompletionAction<CR>
+let g:WhichKeyDesc_copilot_inline_completion = "<leader>ci Trigger Copilot Inline Completion"
+
+
+" ============================================================================
+" Testing & Running
+" ============================================================================
+
+let g:WhichKeyDesc_gradle_prefix = "<leader>r [ Gradle and Testing ]"
+
+" Gradle
+nnoremap <leader>rg :action ActivateGradleToolWindow<CR>
+let g:WhichKeyDesc_gradle_activate = "<leader>rg Activate Gradle Tool Window"
+nnoremap <leader>re :action Gradle.ExecuteTask<CR>
+let g:WhichKeyDesc_gradle_execute = "<leader>re Execute Gradle Task"
+
+nnoremap <leader>rr :action Run<CR>
+let g:WhichKeyDesc_gradle_run = "<leader>rr Run Configuration"
+nnoremap <leader>rs :action Stop<CR>
+let g:WhichKeyDesc_gradle_stop = "<leader>rs Stop Running Configuration"
+
+nnoremap <leader>rv :action Coverage<CR>
+let g:WhichKeyDesc_gradle_coverage = "<leader>rv Run with Coverage"
+
+nnoremap <leader>rc :action ChooseRunConfiguration<CR>
+let g:WhichKeyDesc_gradle_choose_run_configuration = "<leader>rc Choose Run Configuration"
+
+nnoremap <leader>rw :action ActivateRunToolWindow<CR>
+let g:WhichKeyDesc_gradle_run_widget = "<leader>rw Toggle Run Panel"
+
+
