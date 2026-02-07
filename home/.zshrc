@@ -17,11 +17,19 @@ _apply_theme_early() {
       printf '\033]50;SetProfile=White\a'
       export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#abaaaa'
       export NVIM_THEME=light
+      export BAT_THEME="gruvbox-light"
+      export FZF_DEFAULT_OPTS='
+        --color preview-fg:#11110a,gutter:#cbcac3,bg+:#cbcac3,fg+:#11110a,prompt:#a0a0a0,pointer:#aaaaaa,hl:#d7005f,hl+:#d7005f
+      '
       ;;
     *)
       printf '\033]50;SetProfile=Black\a'
       export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#444444'
       export NVIM_THEME=dark
+      unset BAT_THEME
+      export FZF_DEFAULT_OPTS='
+        --color pointer:#565656,hl:#e5438e,hl+:#e5438e,prompt:#929081,fg:#eeead8
+      '
       ;;
   esac
 }
