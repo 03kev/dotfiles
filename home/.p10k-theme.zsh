@@ -1,0 +1,16 @@
+case "${ZSH_THEME_MODE:-dark}" in
+  light)
+    typeset -g POWERLEVEL9K_BACKGROUND=231
+    typeset -g POWERLEVEL9K_DIR_FOREGROUND=242
+    typeset -g POWERLEVEL9K_DIR_SHORTENED_FOREGROUND=250
+    typeset -g POWERLEVEL9K_DIR_ANCHOR_FOREGROUND=242
+    ;;
+  *)
+    typeset -g POWERLEVEL9K_BACKGROUND=236
+    typeset -g POWERLEVEL9K_DIR_FOREGROUND=252
+    typeset -g POWERLEVEL9K_DIR_SHORTENED_FOREGROUND=245
+    typeset -g POWERLEVEL9K_DIR_ANCHOR_FOREGROUND=252
+    ;;
+esac
+
+(( $+functions[p10k] )) && p10k reload
