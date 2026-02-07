@@ -1,0 +1,336 @@
+{
+  "title": "US Layout",
+  "rules": [
+    {
+      "description": "Custom key remappings for US Layout",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "grave_accent_and_tilde",
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "non_us_backslash"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "input_source_if",
+              "input_sources": [
+                {
+                  "input_source_id": "com.apple.keylayout.US",
+                  "language": "en"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "non_us_backslash",
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "grave_accent_and_tilde"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "input_source_if",
+              "input_sources": [
+                {
+                  "input_source_id": "com.apple.keylayout.US",
+                  "language": "en"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "description": "Custom key remappings for US Layout with 'compose key'",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "grave_accent_and_tilde"
+          },
+          "to": [
+            {
+              "key_code": "grave_accent_and_tilde",
+              "modifiers": ["option"]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "input_source_if",
+              "input_sources": [
+                {
+                  "input_source_id": "com.apple.keylayout.US",
+                  "language": "en"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "grave_accent_and_tilde",
+            "modifiers": {
+              "mandatory": ["shift"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "e",
+              "modifiers": ["option"]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "input_source_if",
+              "input_sources": [
+                {
+                  "input_source_id": "com.apple.keylayout.US",
+                  "language": "en"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "non_us_backslash",
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "grave_accent_and_tilde"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "input_source_if",
+              "input_sources": [
+                {
+                  "input_source_id": "com.apple.keylayout.US",
+                  "language": "en"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "description": "Custom key remappings for US Layout with 'compose key'. No complex modifiers.",
+      "manipulators": [
+        {
+          "conditions": [
+            {
+              "input_sources": [
+                {
+                  "input_source_id": "com.apple.keylayout.US",
+                  "language": "en"
+                }
+              ],
+              "type": "input_source_if"
+            }
+          ],
+          "description": "non_us_backslash (§) -> ` (`)",
+          "from": { "key_code": "non_us_backslash" },
+          "to": [{ "key_code": "grave_accent_and_tilde" }],
+          "type": "basic"
+        },
+        {
+          "conditions": [
+            {
+              "input_sources": [
+                {
+                  "input_source_id": "com.apple.keylayout.US",
+                  "language": "en"
+                }
+              ],
+              "type": "input_source_if"
+            }
+          ],
+          "description": "Shift+non_us_backslash (±) -> Shift+` (~)",
+          "from": {
+            "key_code": "non_us_backslash",
+            "modifiers": { "mandatory": ["shift"] }
+          },
+          "to": [
+            {
+              "key_code": "grave_accent_and_tilde",
+              "modifiers": ["shift"]
+            }
+          ],
+          "type": "basic"
+        },
+        {
+          "conditions": [
+            {
+              "input_sources": [
+                {
+                  "input_source_id": "com.apple.keylayout.US",
+                  "language": "en"
+                }
+              ],
+              "type": "input_source_if"
+            }
+          ],
+          "description": "Command+non_us_backslash (§) -> Command+grave_accent_and_tilde (for macos window switch shortcut)",
+          "from": {
+            "key_code": "non_us_backslash",
+            "modifiers": { "mandatory": ["command"] }
+          },
+          "to": [
+            {
+              "key_code": "grave_accent_and_tilde",
+              "modifiers": ["command"]
+            }
+          ],
+          "type": "basic"
+        },
+        {
+          "conditions": [
+            {
+              "input_sources": [
+                {
+                  "input_source_id": "com.apple.keylayout.US",
+                  "language": "en"
+                }
+              ],
+              "type": "input_source_if"
+            }
+          ],
+          "description": "Shift+command+non_us_backslash (§) -> Shift+command+grave_accent_and_tilde (for macos window reverse switch shortcut)",
+          "from": {
+            "key_code": "non_us_backslash",
+            "modifiers": { "mandatory": ["command", "shift"] }
+          },
+          "to": [
+            {
+              "key_code": "grave_accent_and_tilde",
+              "modifiers": ["command", "shift"]
+            }
+          ],
+          "type": "basic"
+        },
+        {
+          "conditions": [
+            {
+              "input_sources": [
+                {
+                  "input_source_id": "com.apple.keylayout.US",
+                  "language": "en"
+                }
+              ],
+              "type": "input_source_if"
+            }
+          ],
+          "description": "Command+grave_accent_and_tilde (`) -> Command+non_us_backslash (to not have macos window switch shortcut)",
+          "from": {
+            "key_code": "grave_accent_and_tilde",
+            "modifiers": { "mandatory": ["command"] }
+          },
+          "to": [
+            {
+              "key_code": "non_us_backslash",
+              "modifiers": ["command"]
+            }
+          ],
+          "type": "basic"
+        },
+        {
+          "conditions": [
+            {
+              "input_sources": [
+                {
+                  "input_source_id": "com.apple.keylayout.US",
+                  "language": "en"
+                }
+              ],
+              "type": "input_source_if"
+            }
+          ],
+          "description": "Shift+command+grave_accent_and_tilde (`) -> Shift+command+non_us_backslash (to not have macos window reverse switch shortcut)",
+          "from": {
+            "key_code": "grave_accent_and_tilde",
+            "modifiers": { "mandatory": ["command", "shift"] }
+          },
+          "to": [
+            {
+              "key_code": "non_us_backslash",
+              "modifiers": ["command", "shift"]
+            }
+          ],
+          "type": "basic"
+
+        },
+        {
+          "conditions": [
+            {
+              "input_sources": [
+                {
+                  "input_source_id": "com.apple.keylayout.US",
+                  "language": "en"
+                }
+              ],
+              "type": "input_source_if"
+            }
+          ],
+          "description": "grave_accent_and_tilde (`) -> RightOption+non_us_backslash (compose `)",
+          "from": { "key_code": "grave_accent_and_tilde" },
+          "to": [
+            {
+              "key_code": "grave_accent_and_tilde",
+              "modifiers": ["right_option"]
+            }
+          ],
+          "type": "basic"
+        },
+        {
+          "conditions": [
+            {
+              "input_sources": [
+                {
+                  "input_source_id": "com.apple.keylayout.US",
+                  "language": "en"
+                }
+              ],
+              "type": "input_source_if"
+            }
+          ],
+          "description": "Shift+grave_accent_and_tilde (~) -> acute dead key (Right Option + e) (compose ´)",
+          "from": {
+            "key_code": "grave_accent_and_tilde",
+            "modifiers": { "mandatory": ["shift"] }
+          },
+          "to": [
+            {
+              "key_code": "e",
+              "modifiers": ["right_option"]
+            }
+          ],
+          "type": "basic"
+        }
+      ]
+    }
+  ]
+}

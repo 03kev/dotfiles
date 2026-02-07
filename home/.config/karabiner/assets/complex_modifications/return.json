@@ -1,0 +1,61 @@
+{
+  "title": "Return keymap",
+  "rules": [
+    {
+      "manipulators": [
+        {
+          "description": "Return to return if pressed alone and control if held down",
+          "from": {
+            "key_code": "return_or_enter",
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "left_control"
+            }
+          ],
+          "to_if_alone": {
+            "key_code": "return_or_enter"
+          },
+          "type": "basic"
+        }
+      ]
+    },
+
+    {
+      "description": "Return dual-role, but allow spamming Return when real Control is held",
+      "manipulators": [
+        {
+          "description": "If Control is held, Return stays Return (no modifiers, repeat enabled)",
+          "from": {
+            "key_code": "return_or_enter",
+            "modifiers": {
+              "mandatory": ["control"],
+              "optional": ["any"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "return_or_enter",
+              "modifiers": [],
+              "repeat": true
+            }
+          ],
+          "type": "basic"
+        },
+        {
+          "description": "Return alone -> Return, held -> Left Control",
+          "from": {
+            "key_code": "return_or_enter",
+            "modifiers": { "optional": ["any"] }
+          },
+          "to": [{ "key_code": "left_control" }],
+          "to_if_alone": [{ "key_code": "return_or_enter" }],
+          "type": "basic"
+        }
+      ]
+    }
+  ]
+}

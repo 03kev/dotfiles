@@ -1,0 +1,35 @@
+{
+  "title": "Friendly Streaming",
+  "rules": [
+    {
+      "description": "Hide Friendly Streaming",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "h",
+            "modifiers": {
+              "mandatory": [
+                "option"
+              ]
+            }
+          },
+          "to_after_key_up": [
+            {
+              "shell_command": "osascript /Users/kevinmuka/.config/karabiner/assets/complex_modifications/scripts/hide_friendly_streaming.scpt"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_unless",
+              "bundle_identifiers": [
+                "^com\\.apple\\.Terminal$",
+                "^com\\.googlecode\\.iterm2$"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

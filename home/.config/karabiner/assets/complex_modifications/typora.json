@@ -1,0 +1,30 @@
+{
+  "title": "Open Web Inspection with Command+Option+I in Typora",
+  "rules": [
+    {
+      "description": "Open Web Inspection with Command+Option+I in Typora",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "i",
+            "modifiers": {
+              "mandatory": ["left_command", "left_option"]
+            }
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": ["abnerworks.Typora"]
+            }
+          ],
+          "to": [
+            {
+              "shell_command": "/Users/kevinmuka/.config/karabiner/assets/complex_modifications/scripts/typora.sh"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

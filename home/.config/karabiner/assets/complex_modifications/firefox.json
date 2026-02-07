@@ -1,0 +1,82 @@
+{
+  "title": "Firefox Shortcuts",
+  "rules": [
+    {
+      "description": "Backslash to Shift + Forward Slash (quick find)",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "non_us_backslash"
+          },
+          "to_after_key_up": [
+            {
+              "key_code": "7",
+              "modifiers": ["shift"]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": ["org.mozilla.firefox"]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "description": "Command+G to open Google",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "g",
+            "modifiers": {
+              "mandatory": ["command"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "left_arrow",
+              "modifiers": ["fn", "option"]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": ["org.mozilla.firefox"]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "description": "Command+Alt+G to open Homepage",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "g",
+            "modifiers": {
+              "mandatory": ["command", "option"]
+            }
+          },
+          "to": [
+            {
+              "shell_command": "osascript /Users/kevinmuka/.config/karabiner/assets/complex_modifications/scripts/open_homepage_firefox.scpt"
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": ["org.mozilla.firefox"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+

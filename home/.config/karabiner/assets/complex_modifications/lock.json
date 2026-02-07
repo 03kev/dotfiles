@@ -1,0 +1,111 @@
+{
+  "title": "Toggle Keyboard Lock with Cmd+Shift+Ctrl+Opt+Fn+L",
+  "rules": [
+    {
+      "description": "Lock keyboard with Cmd+Shift+Ctrl+Opt+Fn+L (if not already locked)",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "l",
+            "modifiers": {
+              "mandatory": ["command", "shift", "control", "option", "fn"]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "keyboard_locked",
+              "value": 0
+            }
+          ],
+          "to": [
+            {
+              "set_variable": {
+                "name": "keyboard_locked",
+                "value": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Unlock keyboard with Cmd+Shift+Ctrl+Opt+Fn+L (if locked)",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "l",
+            "modifiers": {
+              "mandatory": ["command", "shift", "control", "option", "fn"]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "keyboard_locked",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "set_variable": {
+                "name": "keyboard_locked",
+                "value": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Disable all keys when keyboard is locked",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "any": "key_code"
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "keyboard_locked",
+              "value": 1
+            }
+          ],
+          "to": [
+            {
+              "key_code": "vk_none"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "Remap Cmd+Shift+Ctrl+Opt+Fn+L to F19",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "l",
+            "modifiers": {
+              "mandatory": [
+                "command",
+                "shift",
+                "control",
+                "option",
+                "fn"
+              ]
+            }
+          },
+          "to": [
+            {
+              "key_code": "f19"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

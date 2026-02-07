@@ -1,0 +1,25 @@
+{
+  "title": "Finder Open Folder",
+  "rules": [
+    {
+      "description": "Shift+Command+G to open Finder's Go To Folder",
+      "manipulators": [
+        {
+          "from": {
+            "key_code": "g",
+            "modifiers": {
+              "mandatory": ["left_shift", "left_command"]
+            }
+          },
+          "to": [
+            {
+              "shell_command": "osascript -e 'tell application \"Finder\" to activate' -e 'tell application \"System Events\" to keystroke \"g\" using {shift down, command down}'"
+            }
+          ],
+          "type": "basic"
+        }
+      ]
+    }
+  ]
+}
+

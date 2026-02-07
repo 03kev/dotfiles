@@ -1,0 +1,87 @@
+{
+  "title": "Keyboard Input Shortcuts",
+  "rules": [  
+  
+    {
+      "description": "Fn+1 to CTRL+OPT+SHIFT+1 (Italian)",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "1",
+            "modifiers": {
+              "mandatory": [
+                "fn"
+              ]
+            }
+          },
+          "to_after_key_up": [
+            {
+              "key_code": "1",
+              "modifiers": [
+                "left_shift",
+                "left_option",
+                "left_control"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    
+    {
+      "description": "Fn+2 to CTRL+OPT+SHIFT+2 (Japanese)",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "2",
+            "modifiers": {
+              "mandatory": [
+                "fn"
+              ]
+            }
+          },
+          "to_after_key_up": [
+            {
+              "key_code": "2",
+              "modifiers": [
+                "left_shift",
+                "left_option",
+                "left_control"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    
+    {
+      "description": "Fn+3 to CTRL+OPT+SHIFT+3 (English)",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "3",
+            "modifiers": {
+              "mandatory": [
+                "fn"
+              ]
+            }
+          },
+          "to_after_key_up": [
+            {
+              "key_code": "3",
+              "modifiers": [
+                "left_shift",
+                "left_option",
+                "left_control"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "title": "Fn + Key Shortcuts",
+  "rules": [
+    {
+      "description": "Fn+F for Fullscreen in specific apps",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "f",
+            "modifiers": {
+              "mandatory": ["fn"]
+            }
+          },
+          "to_after_key_up": [
+            {
+              "key_code": "f",
+              "modifiers": ["left_command", "left_control"]
+            }
+          ],
+          "conditions": [
+            {
+              "type": "frontmost_application_if",
+              "bundle_identifiers": [
+                "org.mozilla.firefox",
+                "com.microsoft.VSCode",
+                "com.hnc.Discord",
+                "com.apple.Safari.WebApp.53D2BC4E-838B-412B-B5F1-126E5B67F0A1",
+                "com.apple.Safari.WebApp.0AA8291A-FB38-44E7-AFA4-D3DD21DA6493",
+                "com.parallels.winapp.8c4731f1a5288444bb2510ff8d967cc3.48135fd28f5f4250952291f13c9c6dfe.fs",
+                "com.parallels.desktop.console",
+                "com.sublimetext.4",
+                "com.googlecode.iterm2",
+                "com.jetbrains.intellij"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "description": "Fn+Esc to Sleep",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "escape",
+            "modifiers": {
+              "mandatory": ["fn"]
+            }
+          },
+          "to_after_key_up": [
+            {
+              "shell_command": "sleep 0.3 && pmset sleepnow"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "description": "Fn+Q for New Note in Sidenotes",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "q",
+            "modifiers": {
+              "mandatory": ["fn"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "n",
+              "modifiers": ["left_command", "left_control", "left_option"]
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "description": "Fn+Caps Lock for Caps Lock",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "caps_lock",
+            "modifiers": {
+              "mandatory": ["fn"],
+              "optional": ["caps_lock"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "caps_lock"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

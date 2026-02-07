@@ -1,0 +1,52 @@
+{
+  "title": "Caps Lock",
+  "rules": [
+    {
+      "description": "Caps Lock to Escape if pressed and Command+Control+Option+Shift if held down",
+      "manipulators": [
+        {
+          "from": {
+            "key_code": "caps_lock",
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "to": [
+            {
+              "key_code": "left_shift",
+              "modifiers": ["left_command", "left_control", "left_option"]
+            }
+          ],
+          "to_if_alone": {
+            "key_code": "escape"
+          },
+          "conditions": [
+            {
+              "type": "frontmost_application_unless",
+              "bundle_identifiers": ["com.utmapp.UTM"]
+            }
+          ],
+          "type": "basic"
+        }
+      ]
+    },
+
+    {
+      "description": "Esc to Caps_Lock",
+      "manipulators": [
+        {
+          "from": {
+            "key_code": "escape",
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "to": {
+            "key_code": "caps_lock"
+          },
+          "type": "basic"
+        }
+      ]
+    }
+  ]
+}
