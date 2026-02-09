@@ -1,0 +1,182 @@
+#!/usr/bin/env bash
+# pandoc_wrapper.sh
+# Script per gestire conversioni con pandoc con varie modalità:
+#
+# Modalità:
+#   - Predefinita (PDF): se viene passato un solo file, l'output sarà <nome_base>.pdf;
+#       se vengono passati due file, il secondo è usato come output.
+#   - -tex: converte in LaTeX, generando <nome_base>.tex.
+#   - -V: passa tutte le variabili successive a pandoc (come -V chiave=valore).
+#   - --install: esegue "sudo tlmgr install <package>".
+#   - --template: imposta il template default; se viene passato un filename lo usa, altrimenti
+#       mostra in modo interattivo i file in $HOME/.config/scripts/pandoc.
+
+set -u
+
+# Inizializzazione modalità e opzioni
+tex_mode=0
+install_mode=0
+pandoc_vars=()
+pandoc_opts=()
+template_file=""
+templates_dir="$HOME/.config/scripts/pandoc"
+
+finish() {
+  local code="$1"
+  local action="$2"
+  local target="${3:-}"
+
+  if [[ "$code" -eq 0 ]]; then
+    if [[ -n "$target" ]]; then
+      echo "[OK] ${action} completata: ${target}"
+    else
+      echo "[OK] ${action} completata."
+    fi
+  else
+    if [[ -n "$target" ]]; then
+      echo "[ERR] ${action} fallita (exit ${code}): ${target}" >&2
+    else
+      echo "[ERR] ${action} fallita (exit ${code})." >&2
+    fi
+  fi
+  return "$code"
+}
+
+# Elaborazione degli argomenti
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -tex)
+      tex_mode=1
+      shift
+      ;;
+    --install)
+      install_mode=1
+      shift
+      ;;
+    --template)
+      shift
+      if [[ ! -d "$templates_dir" ]]; then
+          echo "Directory $templates_dir non esiste." >&2
+          exit 1
+      fi
+      # Se dopo --template c'è un argomento e corrisponde a un file in templates_dir, lo uso
+      if [[ $# -gt 0 && -f "$templates_dir/$1" ]]; then
+          template_file="$templates_dir/$1"
+          echo "Using template file: $template_file"
+          shift
+      else
+          # Se non è stato passato un file valido, elenco i file presenti per selezione interattiva
+          echo "Seleziona il template dalla cartella $templates_dir:"
+          select file in "$templates_dir"/*; do
+              if [[ -n "$file" ]]; then
+                  template_file="$file"
+                  echo "Hai selezionato: $template_file"
+                  break
+              else
+                  echo "Selezione non valida, riprova."
+              fi
+          done
+      fi
+      ;;
+    -V)
+      shift
+      if [[ $# -eq 0 || "$1" == -* ]]; then
+         echo "Errore: -V richiede almeno una variabile (es. -V title=Foo)." >&2
+         exit 1
+      fi
+      # Raccolgo tutte le variabili successive che non iniziano con "-"
+      while [[ $# -gt 0 && $1 != -* ]]; do
+         pandoc_vars+=("$1")
+         shift
+      done
+      ;;
+    --)
+      shift
+      # Pass-through di tutti i restanti argomenti a pandoc
+      while [[ $# -gt 0 ]]; do
+         pandoc_opts+=("$1")
+         shift
+      done
+      ;;
+    -*)
+      # Flag sconosciute: pass-through a pandoc
+      pandoc_opts+=("$1")
+      shift
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
+
+# Costruisco le opzioni per pandoc a partire dalle variabili raccolte
+if [[ ${#pandoc_vars[@]} -gt 0 ]]; then
+  for var in "${pandoc_vars[@]}"; do
+    pandoc_opts+=("-V" "$var")
+  done
+fi
+
+# Se è stato scelto un template, aggiungo le opzioni relative a template e metadata
+if [[ -n "$template_file" ]]; then
+    pandoc_opts+=("--template" "$template_file")
+    pandoc_opts+=("--metadata-file" "$template_file")
+fi
+
+# Modalità installazione: sudo tlmgr install <package>
+if [[ $install_mode -eq 1 ]]; then
+  if [[ $# -lt 1 ]]; then
+    echo "Usage: $0 --install <package>" >&2
+    exit 1
+  fi
+  package="$1"
+  echo "Installing package $package using tlmgr..."
+  sudo tlmgr install "$package"
+  status=$?
+  finish "$status" "Installazione pacchetto" "$package"
+  exit $?
+fi
+
+# Modalità TeX: conversione in .tex usando il nome base dell'input
+if [[ $tex_mode -eq 1 ]]; then
+  if [[ $# -lt 1 ]]; then
+    echo "Usage: $0 -tex <input file>" >&2
+    exit 1
+  fi
+  input="$1"
+  base="${input%.*}"
+  output="${base}.tex"
+  echo "Converting $input to LaTeX file $output..."
+  if [[ ${#pandoc_opts[@]} -gt 0 ]]; then
+    pandoc -s -t latex "$input" -o "$output" "${pandoc_opts[@]}"
+  else
+    pandoc -s -t latex "$input" -o "$output"
+  fi
+  status=$?
+  finish "$status" "Export LaTeX" "$output"
+  exit $?
+fi
+
+# Modalità predefinita: conversione in PDF
+# Se viene passato un solo file, l'output sarà <nome_base>.pdf;
+# se vengono passati due file, il secondo è usato come output.
+if [[ $# -eq 1 ]]; then
+  input="$1"
+  base="${input%.*}"
+  output="${base}.pdf"
+elif [[ $# -ge 2 ]]; then
+  input="$1"
+  output="$2"
+else
+  echo "Usage: $0 <input file> [output file]" >&2
+  exit 1
+fi
+
+echo "Converting $input to PDF file $output..."
+if [[ ${#pandoc_opts[@]} -gt 0 ]]; then
+  pandoc -s -t pdf "$input" -o "$output" "${pandoc_opts[@]}"
+else
+  pandoc -s -t pdf "$input" -o "$output"
+fi
+status=$?
+finish "$status" "Export PDF" "$output"
+exit $?

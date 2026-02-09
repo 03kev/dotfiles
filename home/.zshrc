@@ -19,7 +19,8 @@ _apply_theme_early() {
       export NVIM_THEME=light
       export BAT_THEME="gruvbox-light"
       export FZF_DEFAULT_OPTS='
-        --color preview-fg:#11110a,gutter:#cbcac3,bg+:#cbcac3,fg+:#11110a,prompt:#a0a0a0,pointer:#aaaaaa,hl:#d7005f,hl+:#d7005f
+        --color preview-fg:#11110a,gutter:#cbcac3,bg+:#cbcac3,fg+:#11110a,prompt:#a0a0a0,pointer:#868686,hl:#d7005f,hl+:#d7005f
+        --pointer='▌'
       '
       ;;
     *)
