@@ -1,8 +1,6 @@
 alias reload='exec zsh -l'
 alias reloadenv="source ~/.zshenv"
 
-# ──────────────────── THEME (EARLY) ───────────────────────
-
 THEME_FILE="$HOME/.zsh/selected_theme"
 
 if [[ -r $THEME_FILE ]]; then
@@ -15,19 +13,19 @@ _apply_theme_early() {
   case "$ZSH_THEME_MODE" in
     light)
       printf '\033]50;SetProfile=White\a'
-      export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#abaaaa'
       export NVIM_THEME=light
       export BAT_THEME="gruvbox-light"
+      export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#abaaaa'
       export FZF_DEFAULT_OPTS='
         --color preview-fg:#11110a,gutter:#cbcac3,bg+:#cbcac3,fg+:#11110a,prompt:#a0a0a0,pointer:#868686,hl:#d7005f,hl+:#d7005f
-        --pointer='▌'
+        --pointer=▌
       '
       ;;
     *)
       printf '\033]50;SetProfile=Black\a'
-      export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#444444'
       export NVIM_THEME=dark
       unset BAT_THEME
+      export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#444444'
       export FZF_DEFAULT_OPTS='
         --color pointer:#565656,hl:#e5438e,hl+:#e5438e,prompt:#929081,fg:#eeead8
       '
@@ -35,16 +33,21 @@ _apply_theme_early() {
   esac
 }
 
-_apply_theme_early
-
-# ───────────────────────────────────────────────────────────
-
-source "$HOME/.zsh/functions.zsh"
-
-source $HOME/.zsh/profiles/ohmyzsh.zsh
-[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
-
-# ──────────────────── THEME (RUNTIME) ─────────────────────
+_apply_shell_colors() {
+  export CLICOLOR=1
+  case "$ZSH_THEME_MODE" in
+    light)
+      export LS_COLORS='di=38;5;247:ln=38;2;90;144;0'
+      alias ls='gls --color=auto'
+      ;;
+    *)
+      export LSCOLORS='Axcxcxdxbxegedabagacad'
+      export LS_COLORS='di=90:ln=32'
+      alias ls='ls -G'
+      ;;
+  esac
+  zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+}
 
 _apply_theme_runtime() {
   [[ -f ~/.p10k-theme.zsh ]] && source ~/.p10k-theme.zsh
@@ -56,18 +59,23 @@ set_theme() {
     echo "Usage: set_theme {light|dark}"
     return 1
   fi
+
   echo "$mode" >| "$THEME_FILE"
   ZSH_THEME_MODE=$mode
+
   _apply_theme_early
+  _apply_shell_colors
   _apply_theme_runtime
 }
 
 alias light='set_theme light'
 alias dark='set_theme dark'
 
-_apply_theme_runtime
+_apply_theme_early
 
-# ─────────────────── NVIM CONFIG ──────────────────────────
+source "$HOME/.zsh/functions.zsh"
+source "$HOME/.zsh/profiles/ohmyzsh.zsh"
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
 if [[ -z ${_MY_COMPINIT_DONE-} ]]; then
   typeset -g _MY_COMPINIT_DONE=1
@@ -85,23 +93,24 @@ nvimc() {
   fi
 
   local config_name=$1
-  shift   # so $@ is now everything after the config name
+  shift
 
   NVIM_APPNAME="nvim-configs/${config_name}" command nvim "$@"
 }
 
 _list_files_in_current_dir() {
-    _files
+  _files
 }
 
 _nvim_config_autocomplete() {
-    local config_dir="$HOME/.config/nvim-configs"
-    local configs=($(ls -1 "$config_dir"))
-    _arguments \
-        '1: :(${configs[@]})' \
-        '2: :_list_files_in_current_dir'
+  local config_dir="$HOME/.config/nvim-configs"
+  local configs=($(ls -1 "$config_dir"))
+  _arguments \
+    '1: :(${configs[@]})' \
+    '2: :_list_files_in_current_dir'
 }
 
 compdef _nvim_config_autocomplete nvimc
 
-# ───────────────────────────────────────────────────────────
+_apply_shell_colors
+_apply_theme_runtime

@@ -27,6 +27,9 @@ sudo scutil --set HostName <newname>
 dscacheutil -flushcache
 \""
 
+export GEMINI_SANDBOX=sandbox-exec
+export SEATBELT_PROFILE=permissive-open
+
 rand() {
 	numbers=($@)
 	rNumber=0
