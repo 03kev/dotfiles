@@ -7,6 +7,7 @@ function M.apply(config, wezterm)
    -- config.use_fancy_tab_bar = false
    config.window_decorations = "RESIZE"
    config.window_close_confirmation = "NeverPrompt"
+   config.status_update_interval = 250
 
    config.font = wezterm.font("JetBrainsMono Nerd Font", {
       weight = "Regular",

@@ -62,5 +62,6 @@ config.colors = {
 }
 
 plugins.setup(config, wezterm, act, palette)
+theme.setup(wezterm)
 
 return config

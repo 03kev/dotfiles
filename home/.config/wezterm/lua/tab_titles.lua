@@ -1,4 +1,5 @@
 local wezterm = require("wezterm")
+local theme = require("lua.theme")
 local M = {}
 
 local function basename(value)
@@ -85,10 +86,12 @@ local function resolve_label(pane, process_name)
 end
 
 function M.setup(wezterm)
-   wezterm.on("update-status", function(_, pane)
+   wezterm.on("update-status", function(window, pane)
       if not pane then
          return
       end
+
+      theme.sync_window(window, pane)
 
       local tab = pane:tab()
       if not tab then
