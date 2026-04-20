@@ -1,0 +1,4 @@
+# lua files indentation
+indent_type = "Spaces"
+indent_width = 3
+
