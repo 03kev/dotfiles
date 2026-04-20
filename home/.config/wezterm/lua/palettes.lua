@@ -4,6 +4,7 @@ local palettes = {
    light = {
       foreground = "#10100f",
       background = "#edebdc",
+      status_text_color = 5,
 
       cursor_bg = "#64635a",
       cursor_fg = "#f9f9f9",
@@ -46,6 +47,7 @@ local palettes = {
    dark = {
       foreground = "#f9f9f9",
       background = "#1d1d1b",
+      status_text_color = 5,
 
       cursor_bg = "#8f8e72",
       cursor_fg = "#f9f9f9",
@@ -55,10 +57,10 @@ local palettes = {
       selection_bg = "#2a2a26",
 
       tab_bar_bg = "#0b0b0a",
-      tab_active_bg = "#1a1a18",
+      tab_active_bg = "#1d1d1b",
       tab_active_fg = "#f9f9f9",
       tab_inactive_bg = "#0b0b0a",
-      tab_inactive_fg = "#7b7a72",
+      tab_inactive_fg = "#9e9a8f",
       tab_hover_bg = "#161615",
       tab_hover_fg = "#f9f9f9",
 

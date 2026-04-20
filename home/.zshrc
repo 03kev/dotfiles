@@ -25,7 +25,7 @@ _apply_theme_early() {
       printf '\033]50;SetProfile=Black\a'
       export NVIM_THEME=dark
       unset BAT_THEME
-      export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#444444'
+      export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#686868'
       export FZF_DEFAULT_OPTS='
         --color pointer:#565656,hl:#e5438e,hl+:#e5438e,prompt:#929081,fg:#eeead8
       '

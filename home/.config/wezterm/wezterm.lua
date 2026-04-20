@@ -14,7 +14,6 @@ local palette = palettes.get(theme_mode)
 ui.apply(config, wezterm)
 
 config.keys = keys.get(wezterm, act)
-plugins.setup(config, wezterm, act)
 
 config.colors = {
    foreground = palette.foreground,
@@ -61,5 +60,7 @@ config.colors = {
       },
    },
 }
+
+plugins.setup(config, wezterm, act, palette)
 
 return config
