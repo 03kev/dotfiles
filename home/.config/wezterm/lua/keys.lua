@@ -26,11 +26,15 @@ function M.get(wezterm, act)
          mods = "CMD",
          action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
       },
-
       {
          key = "d",
          mods = "CMD|SHIFT",
          action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain" }),
+      },
+      {
+         key = "L",
+         mods = "CMD|SHIFT",
+         action = act.ShowDebugOverlay,
       },
    }
 end

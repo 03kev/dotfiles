@@ -91,7 +91,7 @@ function M.setup(wezterm)
          return
       end
 
-      theme.sync_window(window, pane)
+      theme.sync_window_theme(window, pane)
 
       local tab = pane:tab()
       if not tab then

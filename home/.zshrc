@@ -1,18 +1,28 @@
 alias reload='exec zsh -l'
 alias reloadenv="source ~/.zshenv"
 
-THEME_FILE="$HOME/.zsh/selected_theme"
+DEFAULT_THEME_FILE="$HOME/.zsh/selected_theme"
 
-if [[ -r $THEME_FILE ]]; then
-  ZSH_THEME_MODE=$(<"$THEME_FILE")
-else
-  ZSH_THEME_MODE=dark
-fi
+_read_default_theme_mode() {
+  if [[ -r $DEFAULT_THEME_FILE ]]; then
+    local mode
+    mode=$(<"$DEFAULT_THEME_FILE")
+    [[ $mode == light ]] && print -r -- light && return
+  fi
 
-_apply_theme_early() {
+  print -r -- dark
+}
+
+_persist_default_theme_mode() {
+  print -r -- "$1" >| "$DEFAULT_THEME_FILE"
+}
+
+ZSH_THEME_MODE=$(_read_default_theme_mode)
+
+_apply_theme_environment() {
   case "$ZSH_THEME_MODE" in
     light)
-      printf '\033]50;SetProfile=White\a'
+      printf '\033]50;SetProfile=White\a' # iterm2
       export NVIM_THEME=light
       export BAT_THEME="gruvbox-light"
       export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#abaaaa'
@@ -22,7 +32,7 @@ _apply_theme_early() {
       '
       ;;
     *)
-      printf '\033]50;SetProfile=Black\a'
+      printf '\033]50;SetProfile=Black\a' # iterm2
       export NVIM_THEME=dark
       unset BAT_THEME
       export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#686868'
@@ -49,7 +59,7 @@ _wezterm_set_user_var() {
   fi
 }
 
-_publish_theme_mode() {
+_publish_runtime_theme_mode() {
   _wezterm_set_user_var theme_mode "${ZSH_THEME_MODE:-dark}"
 }
 
@@ -69,8 +79,14 @@ _apply_shell_colors() {
   zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 }
 
-_apply_theme_runtime() {
+_reload_prompt_theme() {
   [[ -f ~/.p10k-theme.zsh ]] && source ~/.p10k-theme.zsh
+}
+
+_apply_current_theme_runtime() {
+  _apply_shell_colors
+  _reload_prompt_theme
+  _publish_runtime_theme_mode
 }
 
 set_theme() {
@@ -80,19 +96,17 @@ set_theme() {
     return 1
   fi
 
-  echo "$mode" >| "$THEME_FILE"
+  _persist_default_theme_mode "$mode"
   ZSH_THEME_MODE=$mode
 
-  _apply_theme_early
-  _apply_shell_colors
-  _apply_theme_runtime
-  _publish_theme_mode
+  _apply_theme_environment
+  _apply_current_theme_runtime
 }
 
 alias light='set_theme light'
 alias dark='set_theme dark'
 
-_apply_theme_early
+_apply_theme_environment
 
 source "$HOME/.zsh/functions.zsh"
 source "$HOME/.zsh/profiles/ohmyzsh.zsh"
@@ -133,6 +147,4 @@ _nvim_config_autocomplete() {
 
 compdef _nvim_config_autocomplete nvimc
 
-_apply_shell_colors
-_apply_theme_runtime
-_publish_theme_mode
+_apply_current_theme_runtime
