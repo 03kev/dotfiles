@@ -48,19 +48,13 @@ function M.setup(config, _, palette)
             enabled = false,
          },
          clock = {
-            enabled = true,
-            icon = "",
-            format = "%H:%M",
-            color = palette.status_text_color,
+            enabled = false,
          },
          cwd = {
-            enabled = true,
-            icon = "",
-            color = palette.status_text_color,
+            enabled = false,
          },
          ssh = {
-            enabled = true,
-            color = palette.status_text_color,
+            enabled = false,
          },
          spotify = {
             enabled = false,

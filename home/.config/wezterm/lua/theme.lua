@@ -3,8 +3,12 @@ local palettes = require("lua.palettes")
 
 local M = {}
 local pane_theme_modes = {}
+local inherit_theme_sentinel = "__inherit__"
 
--- Persisted fallback used when a pane hasn't published its live theme yet.
+-- Theme contract:
+-- 1. ~/.zsh/selected_theme is the persisted global default for new tabs/shells.
+-- 2. a pane may publish a live `theme_mode` user var to override its current tab.
+-- 3. WezTerm stores the resolved per-tab theme in tab config overrides.
 M.default_theme_file = wezterm.home_dir .. "/.zsh/selected_theme"
 
 function M.read_default_theme_mode()
@@ -85,71 +89,182 @@ function M.get_colors(mode)
    }
 end
 
-function M.resolve_runtime_theme_mode(pane)
-   if pane then
-      local pane_id = pane:pane_id()
-      local remembered_mode = pane_theme_modes[pane_id]
-      if remembered_mode then
-         return remembered_mode
-      end
-
-      local vars = pane:get_user_vars()
-      if vars.theme_mode then
-         local mode = M.normalize_mode(vars.theme_mode)
-         pane_theme_modes[pane_id] = mode
-         return mode
-      end
+function M.read_tab_theme_mode(window, tab)
+   if not window or not tab then
+      return nil
    end
 
-   return M.read_default_theme_mode()
+   -- Tab overrides are the persisted source of truth for per-tab theme memory.
+   local ok, overrides = pcall(function()
+      return window:effective_tab_config_overrides(tab)
+   end)
+
+   if not ok then
+      ok, overrides = pcall(function()
+         return window:get_tab_config_overrides(tab)
+      end)
+   end
+
+   if not ok or type(overrides) ~= "table" then
+      return nil
+   end
+
+   if overrides.theme_mode then
+      return M.normalize_mode(overrides.theme_mode)
+   end
+
+   return nil
 end
 
-function M.resolve_runtime_theme_mode_for_pane_id(pane_id)
+function M.read_live_pane_theme_mode(pane)
+   if not pane then
+      return nil
+   end
+
+   -- Live user vars let the current shell/editor temporarily steer the tab theme.
+   local pane_id = pane:pane_id()
    local remembered_mode = pane_theme_modes[pane_id]
    if remembered_mode then
       return remembered_mode
    end
 
-   return M.read_default_theme_mode()
+   local vars = pane:get_user_vars()
+   if vars.theme_mode then
+      if vars.theme_mode == inherit_theme_sentinel then
+         return nil
+      end
+      local mode = M.normalize_mode(vars.theme_mode)
+      pane_theme_modes[pane_id] = mode
+      return mode
+   end
+
+   return nil
+end
+
+function M.get_target_tab(window, pane)
+   if pane then
+      local ok, tab = pcall(function()
+         return pane:tab()
+      end)
+      if ok and tab then
+         return tab
+      end
+   end
+
+   if window then
+      local ok, tab = pcall(function()
+         return window:active_tab()
+      end)
+      if ok and tab then
+         return tab
+      end
+   end
+
+   return nil
+end
+
+function M.resolve_runtime_theme(window, pane)
+   -- Runtime precedence is: live pane request -> stored tab override -> global default.
+   local live_pane_mode = M.read_live_pane_theme_mode(pane)
+   if live_pane_mode then
+      return live_pane_mode, "pane"
+   end
+
+   local tab = M.get_target_tab(window, pane)
+   local tab_mode = M.read_tab_theme_mode(window, tab)
+   if tab_mode then
+      return tab_mode, "tab"
+   end
+
+   return M.read_default_theme_mode(), "default"
 end
 
 function M.apply_window_theme_mode(window, mode)
    if not window then
-      return
+      return false
    end
 
    local overrides = window:get_config_overrides() or {}
 
    if overrides.theme_mode == mode and overrides.colors ~= nil then
-      return
+      return false
    end
 
    overrides.theme_mode = mode
    overrides.colors = M.get_colors(mode)
    window:set_config_overrides(overrides)
+   return true
+end
+
+function M.clear_tab_theme_mode(window, pane)
+   local tab = M.get_target_tab(window, pane)
+   if not window or not tab then
+      return false
+   end
+
+   local ok = pcall(function()
+      window:clear_tab_config_overrides(tab)
+   end)
+
+   return ok
+end
+
+function M.apply_tab_theme_mode(window, tab, mode)
+   if not window or not tab then
+      return false
+   end
+
+   local ok, overrides = pcall(function()
+      return window:get_tab_config_overrides(tab)
+   end)
+
+   if not ok then
+      return false
+   end
+
+   if type(overrides) ~= "table" then
+      overrides = {}
+   end
+
+   if overrides.theme_mode == mode and overrides.colors ~= nil then
+      return false
+   end
+
+   overrides.theme_mode = mode
+   overrides.colors = M.get_colors(mode)
+   window:set_tab_config_overrides(tab, overrides)
+   return true
+end
+
+function M.apply_runtime_theme_mode(window, pane, mode, source)
+   mode = M.normalize_mode(mode)
+   source = source or "pane"
+
+   if source == "default" then
+      local cleared = M.clear_tab_theme_mode(window, pane)
+      local applied = M.apply_window_theme_mode(window, mode)
+      return cleared or applied
+   end
+
+   local tab = M.get_target_tab(window, pane)
+   if tab and M.apply_tab_theme_mode(window, tab, mode) then
+      return true
+   end
+
+   return M.apply_window_theme_mode(window, mode)
 end
 
 function M.sync_window_theme(window, pane)
-   M.apply_window_theme_mode(window, M.resolve_runtime_theme_mode(pane))
+   local mode, source = M.resolve_runtime_theme(window, pane)
+   return M.apply_runtime_theme_mode(window, pane, mode, source)
 end
 
-function M.sync_window_theme_from_tab_info(tab_info)
-   if not tab_info or not tab_info.window_id or not tab_info.active_pane or not tab_info.active_pane.pane_id then
-      return
+function M.apply_resolved_theme(window, pane, mode)
+   if mode ~= nil then
+      return M.apply_runtime_theme_mode(window, pane, mode, "pane")
    end
 
-   local mux_window = wezterm.mux.get_window(tab_info.window_id)
-   if not mux_window then
-      return
-   end
-
-   local gui_window = mux_window:gui_window()
-   if not gui_window then
-      return
-   end
-
-   local mode = M.resolve_runtime_theme_mode_for_pane_id(tab_info.active_pane.pane_id)
-   M.apply_window_theme_mode(gui_window, mode)
+   return M.sync_window_theme(window, pane)
 end
 
 function M.setup(wezterm)
@@ -158,22 +273,24 @@ function M.setup(wezterm)
          return
       end
 
+      if value == inherit_theme_sentinel then
+         pane_theme_modes[pane:pane_id()] = nil
+         M.clear_tab_theme_mode(window, pane)
+         M.apply_window_theme_mode(window, M.read_default_theme_mode())
+         return
+      end
+
       local mode = M.normalize_mode(value)
       pane_theme_modes[pane:pane_id()] = mode
-      M.apply_window_theme_mode(window, mode)
+      M.apply_resolved_theme(window, pane, mode)
    end)
 
    wezterm.on("window-config-reloaded", function(window, pane)
-      M.sync_window_theme(window, pane)
+      M.apply_resolved_theme(window, pane)
    end)
 
    wezterm.on("window-focus-changed", function(window, pane)
-      M.sync_window_theme(window, pane)
-   end)
-
-   wezterm.on("format-window-title", function(tab, pane, tabs, panes, config)
-      M.sync_window_theme_from_tab_info(tab)
-      return tab.window_title or pane.title or ""
+      M.apply_resolved_theme(window, pane)
    end)
 end
 
