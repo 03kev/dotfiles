@@ -2,14 +2,14 @@ local wezterm = require("wezterm")
 local palettes = require("lua.palettes")
 
 local M = {}
-local pane_theme_modes = {}
-local inherit_theme_sentinel = "__inherit__"
+-- Weak keys ensure pane-scoped state is released automatically when panes die.
+local pane_theme_modes = setmetatable({}, { __mode = "k" })
 
 -- Theme contract:
--- 1. ~/.zsh/selected_theme is the persisted global default for new tabs/shells.
+-- 1. ~/.local/state/dotfiles/theme is the persisted global default for new tabs/shells.
 -- 2. a pane may publish a live `theme_mode` user var to override its current tab.
 -- 3. WezTerm stores the resolved per-tab theme in tab config overrides.
-M.default_theme_file = wezterm.home_dir .. "/.zsh/selected_theme"
+M.default_theme_file = wezterm.home_dir .. "/.local/state/dotfiles/theme"
 
 function M.read_default_theme_mode()
    local f = io.open(M.default_theme_file, "r")
@@ -24,6 +24,10 @@ function M.read_default_theme_mode()
       return "light"
    end
 
+   if mode == "dark" then
+      return "dark"
+   end
+
    return "dark"
 end
 
@@ -33,6 +37,14 @@ function M.normalize_mode(mode)
    end
 
    return "dark"
+end
+
+function M.parse_mode(mode)
+   if mode == "light" or mode == "dark" then
+      return mode
+   end
+
+   return nil
 end
 
 function M.get_palette(mode)
@@ -122,20 +134,18 @@ function M.read_live_pane_theme_mode(pane)
    end
 
    -- Live user vars let the current shell/editor temporarily steer the tab theme.
-   local pane_id = pane:pane_id()
-   local remembered_mode = pane_theme_modes[pane_id]
+   local remembered_mode = pane_theme_modes[pane]
    if remembered_mode then
       return remembered_mode
    end
 
    local vars = pane:get_user_vars()
    if vars.theme_mode then
-      if vars.theme_mode == inherit_theme_sentinel then
-         return nil
+      local mode = M.parse_mode(vars.theme_mode)
+      if mode then
+         pane_theme_modes[pane] = mode
+         return mode
       end
-      local mode = M.normalize_mode(vars.theme_mode)
-      pane_theme_modes[pane_id] = mode
-      return mode
    end
 
    return nil
@@ -196,19 +206,6 @@ function M.apply_window_theme_mode(window, mode)
    return true
 end
 
-function M.clear_tab_theme_mode(window, pane)
-   local tab = M.get_target_tab(window, pane)
-   if not window or not tab then
-      return false
-   end
-
-   local ok = pcall(function()
-      window:clear_tab_config_overrides(tab)
-   end)
-
-   return ok
-end
-
 function M.apply_tab_theme_mode(window, tab, mode)
    if not window or not tab then
       return false
@@ -241,9 +238,7 @@ function M.apply_runtime_theme_mode(window, pane, mode, source)
    source = source or "pane"
 
    if source == "default" then
-      local cleared = M.clear_tab_theme_mode(window, pane)
-      local applied = M.apply_window_theme_mode(window, mode)
-      return cleared or applied
+      return M.apply_window_theme_mode(window, mode)
    end
 
    local tab = M.get_target_tab(window, pane)
@@ -273,15 +268,12 @@ function M.setup(wezterm)
          return
       end
 
-      if value == inherit_theme_sentinel then
-         pane_theme_modes[pane:pane_id()] = nil
-         M.clear_tab_theme_mode(window, pane)
-         M.apply_window_theme_mode(window, M.read_default_theme_mode())
+      local mode = M.parse_mode(value)
+      if not mode then
          return
       end
 
-      local mode = M.normalize_mode(value)
-      pane_theme_modes[pane:pane_id()] = mode
+      pane_theme_modes[pane] = mode
       M.apply_resolved_theme(window, pane, mode)
    end)
 

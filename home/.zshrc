@@ -46,5 +46,6 @@ _nvim_config_autocomplete() {
 }
 
 compdef _nvim_config_autocomplete nvimc
+compdef _theme_completion theme
 
 _apply_current_theme_runtime

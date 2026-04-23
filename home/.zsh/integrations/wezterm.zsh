@@ -17,7 +17,3 @@ _wezterm_set_user_var() {
 _publish_runtime_theme_mode() {
   _wezterm_set_user_var theme_mode "${ZSH_THEME_MODE:-dark}"
 }
-
-_clear_runtime_theme_mode() {
-  _wezterm_set_user_var theme_mode "__inherit__"
-}
