@@ -3,6 +3,11 @@ alias reloadenv="source ~/.zshenv"
 
 source "$HOME/.zsh/theme.zsh"
 
+for integration in "$HOME"/.zsh/integrations/*.zsh(N); do
+  source "$integration"
+done
+unset integration
+
 source "$HOME/.zsh/functions.zsh"
 source "$HOME/.zsh/profiles/ohmyzsh.zsh"
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh

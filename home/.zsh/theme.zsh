@@ -2,8 +2,7 @@ DEFAULT_THEME_FILE="$HOME/.zsh/selected_theme"
 
 # Theme contract:
 # - ~/.zsh/selected_theme is the persisted global default for new tabs and shells.
-# - the current shell can publish a live `theme_mode` user var to WezTerm.
-# - WezTerm persists the resolved per-tab theme separately via tab overrides.
+# - integrations may publish the live `theme_mode` to terminal-specific runtimes.
 
 _read_default_theme_mode() {
   if [[ -r $DEFAULT_THEME_FILE ]]; then
@@ -43,28 +42,12 @@ _apply_theme_environment() {
   esac
 }
 
-_wezterm_set_user_var() {
-  [[ -n ${WEZTERM_PANE-} ]] || return 0
-  (( $+commands[base64] )) || return 0
-
-  local name=$1
-  local value=$2
-  local encoded
-  encoded=$(printf '%s' "$value" | base64 | tr -d '\r\n')
-
-  if [[ -n ${TMUX-} ]]; then
-    printf '\033Ptmux;\033\033]1337;SetUserVar=%s=%s\007\033\\' "$name" "$encoded"
-  else
-    printf '\033]1337;SetUserVar=%s=%s\007' "$name" "$encoded"
-  fi
-}
-
 _publish_runtime_theme_mode() {
-  _wezterm_set_user_var theme_mode "${ZSH_THEME_MODE:-dark}"
+  return 0
 }
 
 _clear_runtime_theme_mode() {
-  _wezterm_set_user_var theme_mode "__inherit__"
+  return 0
 }
 
 _apply_shell_colors() {
