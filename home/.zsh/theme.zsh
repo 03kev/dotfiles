@@ -4,6 +4,7 @@ DEFAULT_THEME_FILE="$THEME_STATE_DIR/theme"
 # Theme contract:
 # - ~/.local/state/dotfiles/theme is the persisted global default for new tabs and shells.
 # - integrations may publish the live `theme_mode` to terminal-specific runtimes.
+# - child shells should inherit ZSH_THEME_MODE from their parent app before falling back to the global default.
 
 _read_default_theme_mode() {
   if [[ -r $DEFAULT_THEME_FILE ]]; then
@@ -16,12 +17,31 @@ _read_default_theme_mode() {
   print -r -- dark
 }
 
+_parse_theme_mode() {
+  local mode=${1:-}
+  [[ $mode == light ]] && print -r -- light && return 0
+  [[ $mode == dark ]] && print -r -- dark && return 0
+  return 1
+}
+
+_resolve_initial_theme_mode() {
+  local mode
+
+  mode=$(_parse_theme_mode "${ZSH_THEME_MODE-}") && {
+    print -r -- "$mode"
+    return
+  }
+
+  _read_default_theme_mode
+}
+
 _persist_default_theme_mode() {
   mkdir -p "$THEME_STATE_DIR"
   print -r -- "$1" >| "$DEFAULT_THEME_FILE"
 }
 
-ZSH_THEME_MODE=$(_read_default_theme_mode)
+ZSH_THEME_MODE=$(_resolve_initial_theme_mode)
+export ZSH_THEME_MODE
 
 [[ -r "$HOME/.config/theme/colors.zsh" ]] && source "$HOME/.config/theme/colors.zsh"
 
