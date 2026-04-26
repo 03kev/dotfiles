@@ -23,6 +23,8 @@ _persist_default_theme_mode() {
 
 ZSH_THEME_MODE=$(_read_default_theme_mode)
 
+[[ -r "$HOME/.config/theme/colors.zsh" ]] && source "$HOME/.config/theme/colors.zsh"
+
 for theme_module in "$HOME"/.zsh/theme/*.zsh(N); do
   source "$theme_module"
 done
