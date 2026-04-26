@@ -31,7 +31,7 @@ function M.apply(config, wezterm)
       brightness = 1.0,
    }
 
-   config.default_cursor_style = "SteadyBlock"
+   config.default_cursor_style = "SteadyBar"
    config.cursor_thickness = "1px"
    config.default_cwd = wezterm.home_dir
 end

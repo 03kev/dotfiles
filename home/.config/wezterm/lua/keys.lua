@@ -3,6 +3,11 @@ local M = {}
 function M.get(wezterm, act)
    return {
       {
+         key = "Enter",
+         mods = "ALT",
+         action = act.DisableDefaultAssignment,
+      },
+      {
          key = "t",
          mods = "CMD",
          action = act.SpawnCommandInNewTab({

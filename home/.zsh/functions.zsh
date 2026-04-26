@@ -7,7 +7,6 @@ alias pip=pip3
 
 alias telegram="open ~/library/Group\ Containers/6N38VWS5BX.ru.keepcoder.Telegram"
 alias resetlaunchpad="defaults write com.apple.dock ResetLaunchPad -bool true; killall Dock"
-alias cl="/usr/bin/osascript -e 'tell application \"System Events\" to tell process \"Terminal\" to keystroke \"k\" using command down'"
 
 alias gitlog="git log --oneline --graph --decorate --all"
 
