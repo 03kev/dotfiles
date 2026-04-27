@@ -37,6 +37,9 @@ La root del repo e' `~/.dotfiles`. Il layout principale e':
 │   └── .p10k-theme.zsh
 ├── scripts
 │   └── dot.sh
+├── docs
+│   ├── DEPENDENCIES.md
+│   └── MODULES.md
 ├── .gitmodules
 └── README.md
 ```
@@ -198,12 +201,7 @@ Il flusso di caricamento e':
 └── .p10k.zsh
 ```
 
-Le funzioni e alias principali stanno in [`home/.zsh/functions.zsh`](./home/.zsh/functions.zsh):
-
-- alias per reload shell e tmux
-- helper per IP, versioni app macOS, bundle id, compilazione C rapida
-- alias e funzioni per tmux
-- funzioni macOS-specific come `telegram`, `resetlaunchpad`, `computername`
+Le funzioni e alias personali stanno in [`home/.zsh/functions.zsh`](./home/.zsh/functions.zsh). Le integrazioni runtime vivono invece in [`home/.zsh/integrations`](./home/.zsh/integrations), dove vengono caricati i bridge verso strumenti come WezTerm e Gemini CLI quando disponibili.
 
 ### Tema Condiviso
 
@@ -278,127 +276,26 @@ La configurazione ha un README dedicato in [`home/.config/nvim/README.md`](./hom
 - `dot.sh apply` crei `~/.config/nvim -> ~/.dotfiles/home/.config/nvim`
 - il tema condiviso in `~/.config/theme/colors.lua` sia presente
 
-### Karabiner
+### Altri Moduli
 
-La config Karabiner e' in [`home/.config/karabiner`](./home/.config/karabiner):
-
-- `karabiner.json`: configurazione principale
-- `assets/complex_modifications/*.json`: regole custom
-- `automatic_backups/*.json`: snapshot generati da Karabiner
-
-Questa parte e' macOS-only e richiede Karabiner-Elements.
-
-### Tmux
-
-[`home/.tmux.conf`](./home/.tmux.conf) configura:
-
-- prefix `C-a`
-- navigazione pane con `h/j/k/l`
-- plugin TPM: `tmux-sensible`, `tmux-resurrect`
-- supporto a passthrough terminale per preview immagini
-- colori e statusline custom
-
-Comandi shell collegati:
-
-```sh
-tmuxplugins
-reloadtmux
-tnw
-tn <session>
-```
-
-### IdeaVim
-
-[`home/.ideavimrc`](./home/.ideavimrc) replica parte del workflow Vim/Neovim dentro JetBrains:
-
-- leader su spazio
-- search, numbering e scrolloff
-- plugin IdeaVim come surround, commentary, multiple cursors, EasyMotion, WhichKey
-- clipboard separata di default, con clipboard di sistema solo tramite `+`
-- mapping per tab, refactor e azioni JetBrains
-
-### Script Custom
-
-Gli script custom sono linkati in:
-
-```text
-~/.config/scripts
-```
-
-Attualmente il principale e' [`home/.config/scripts/mypandoc`](./home/.config/scripts/mypandoc), wrapper attorno a `pandoc` per:
-
-- export PDF
-- export LaTeX con `-tex`
-- passaggio di variabili `-V`
-- installazione pacchetti TeX con `tlmgr`
-- template in `~/.config/scripts/pandoc`
-
-`.zprofile` aggiunge `~/.config/scripts` al `PATH`.
+Karabiner, tmux, IdeaVim e script custom sono documentati in [`docs/MODULES.md`](./docs/MODULES.md). Restano nel repo, ma non sono il percorso principale per capire o installare la configurazione.
 
 ## Dipendenze
 
-Questa sezione distingue tra:
+Il README tiene solo una vista sintetica. La lista completa, divisa per componente, e' in [`docs/DEPENDENCIES.md`](./docs/DEPENDENCIES.md).
 
-- dipendenze necessarie per usare il repo dotfiles
-- dipendenze della shell
-- dipendenze di terminale, editor e app
-- dipendenze macOS-only
-
-### Hard Requirement Del Repo
+Dipendenze minime del repo:
 
 | Dipendenza | Perche' serve |
 | --- | --- |
-| `git` | clone repo e gestione submodule |
+| `git` | clone repo, submodule e plugin esterni |
 | `bash` | esecuzione di `scripts/dot.sh` |
-| tool POSIX base (`find`, `ln`, `readlink`, `mkdir`, `mv`) | applicazione e adozione dei symlink |
+| utility base tipo `mkdir`, `mv`, `ln`, `readlink`, `date` | applicazione, adozione e backup dei symlink |
 | `zsh` | shell principale configurata dal repo |
 
-### Dipendenze Della Shell
+Le dipendenze interne a Neovim non sono duplicate qui: sono documentate nel README del submodule `home/.config/nvim`.
 
-| Dipendenza | Dove viene usata | Se la togli |
-| --- | --- | --- |
-| Homebrew | `.zprofile`, `ohmyzsh.zsh` | PATH e plugin Homebrew non vengono inizializzati |
-| Oh My Zsh | `.zsh/profiles/ohmyzsh.zsh` | il profilo shell principale non parte correttamente |
-| Powerlevel10k | `.p10k.zsh`, `.p10k-theme.zsh` | il prompt configurato non viene caricato |
-| `zsh-autosuggestions` | `ohmyzsh.zsh` | autosuggestions non disponibili; il source Homebrew puo' fallire se manca |
-| `zsh-vi-mode` | plugin Oh My Zsh | modalita' vi della shell non disponibile |
-| `zoxide` | `ohmyzsh.zsh`, funzioni Neovim | jump directory non disponibile |
-| `fzf` | alias `fzfnvim`, tema CLI, workflow ricerca | picker shell e opzioni colore fzf non utili |
-| `curl` | alias `weather`, funzione `ip` | meteo e IP pubblico non funzionano |
-| GNU coreutils (`gls`) | tema shell light | `ls` colorato in modalita' light non funziona come configurato |
-
-### Dipendenze Di App E Tool
-
-| Dipendenza | Dove viene usata | Se la togli |
-| --- | --- | --- |
-| WezTerm | `~/.config/wezterm`, integrazione tema | terminale e sync tema/pane non disponibili |
-| tmux + TPM | `.tmux.conf`, funzioni shell | plugin tmux e mapping tmux non disponibili |
-| Neovim | submodule `home/.config/nvim`, `$EDITOR` | editor principale non disponibile |
-| Karabiner-Elements | `~/.config/karabiner` | regole tastiera macOS non applicate |
-| JetBrains + IdeaVim | `.ideavimrc` | mapping Vim dentro IDE non disponibili |
-| `pandoc` | `mypandoc` | export PDF/TeX non funziona |
-| TeX Live / `tlmgr` | `.zprofile`, `mypandoc`, Neovim TeX | compilazione e install pacchetti TeX non funzionano |
-| Gemini CLI | `.zsh/integrations/gemini.zsh` | wrapper tema Gemini non viene caricato |
-| Java / SDKMAN | `.zsh/profiles/ohmyzsh.zsh`, alias `fitch` | SDK Java e alias Fitch non funzionano |
-| PostgreSQL 18 | `.zprofile` | path PostgreSQL custom non viene usato |
-| `gcc` | funzione `c` | compilazione C rapida non funziona |
-
-### Dipendenze macOS-Only
-
-Questa repo oggi e' fortemente orientata a macOS. I punti da rivedere per Linux sono:
-
-| Dipendenza / comando | Dove viene usata | Nota |
-| --- | --- | --- |
-| `/opt/homebrew/bin/brew` | `.zprofile` | bootstrap Homebrew Apple Silicon |
-| `/usr/local/texlive/2025/bin/universal-darwin` | `.zprofile` | path TeX Live macOS |
-| `open` | funzioni shell e script | apertura app/file macOS |
-| `defaults`, `killall Dock` | `resetlaunchpad` | gestione Launchpad |
-| `ipconfig` | funzione `ip` | IP locale macOS |
-| `mdls` | funzione `version` | metadata app macOS |
-| `osascript` | funzione `bundleid` | AppleScript |
-| `scutil`, `dscacheutil` | alias `computername` | gestione nome macchina |
-| Karabiner-Elements | `~/.config/karabiner` | solo macOS |
-| `sandbox-exec` | integrazione Gemini | sandbox macOS |
+La configurazione e' oggi macOS-first. Su Linux la parte portabile e' principalmente `dot.sh`, Zsh, tmux, WezTerm, tema e script generici; vanno invece portati Karabiner, AppleScript, path Homebrew, path TeX Live macOS e funzioni shell basate su comandi macOS.
 
 ## Neovim Submodule
 
@@ -434,12 +331,12 @@ Quando aggiorni Neovim dentro `home/.config/nvim`, ricordati che il repo dotfile
 
 Su una macchina nuova:
 
-1. installa `git`, `bash`, `zsh` e Homebrew
+1. installa `git`, `bash`, `zsh` e le utility base del sistema
 2. clona `~/.dotfiles`
 3. esegui `git submodule update --init --recursive`
 4. esegui `./scripts/dot.sh apply`
-5. installa Oh My Zsh, Powerlevel10k, `zsh-autosuggestions`, `zsh-vi-mode`
-6. installa le app/config che vuoi usare: WezTerm, Karabiner-Elements, Neovim, tmux, TeX Live, Pandoc
+5. installa le dipendenze per le sezioni che vuoi usare, seguendo [`docs/DEPENDENCIES.md`](./docs/DEPENDENCIES.md)
+6. installa Oh My Zsh, Powerlevel10k, `zsh-autosuggestions`, `zsh-vi-mode`
 7. apri una nuova shell con `exec zsh -l`
 8. verifica il tema con `theme light` e `theme dark`
 
