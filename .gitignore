@@ -1,10 +1,6 @@
 # macOS
 .DS_Store
 
-# theme runtime state (tuo)
-.zsh/selected_theme
-selected_theme
-
 # editor / cache
 *.swp
 *.swo
