@@ -1,0 +1,24 @@
+{
+  "title": "Toggle Input Lock with Touch ID",
+  "rules": [
+    {
+      "description": "Input lock with Cmd+Shift+Ctrl+Opt+Fn+L using Touch ID",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "l",
+            "modifiers": {
+              "mandatory": ["command", "shift", "control", "option", "fn"]
+            }
+          },
+          "to": [
+            {
+              "shell_command": "/Users/kevinmuka/.config/karabiner/assets/complex_modifications/scripts/toggle-input-lock.sh toggle"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -7,3 +7,6 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH="/opt/homebrew/opt/postgresql@18/bin:$PATH"
 
 export PATH="$PATH:/$HOME/.config/scripts"
+
+# Added by Antigravity CLI installer
+export PATH="/Users/kevinmuka/.local/bin:$PATH"

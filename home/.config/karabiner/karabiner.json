@@ -10,6 +10,19 @@
                 "parameters": { "basic.to_if_alone_timeout_milliseconds": 800 },
                 "rules": [
                     {
+                        "description": "Input lock with Cmd+Shift+Ctrl+Opt+Fn+L using Touch ID",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "l",
+                                    "modifiers": { "mandatory": ["command", "shift", "control", "option", "fn"] }
+                                },
+                                "to": [{ "shell_command": "/Users/kevinmuka/.config/karabiner/assets/complex_modifications/scripts/toggle-input-lock.sh toggle" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "Change control+hjkl to arrow keys",
                         "manipulators": [
                             {
@@ -390,6 +403,7 @@
                     },
                     {
                         "description": "Lock keyboard with Cmd+Shift+Ctrl+Opt+Fn+L (if not already locked)",
+                        "enabled": false,
                         "manipulators": [
                             {
                                 "conditions": [

@@ -223,12 +223,18 @@ function M.apply_tab_theme_mode(window, tab, mode)
       overrides = {}
    end
 
-   if overrides.theme_mode == mode and overrides.colors ~= nil then
+   overrides.set_environment_variables = overrides.set_environment_variables or {}
+   local has_runtime_env = overrides.set_environment_variables.ZSH_THEME_MODE == mode
+      and overrides.set_environment_variables.NVIM_THEME == mode
+
+   if overrides.theme_mode == mode and overrides.colors ~= nil and has_runtime_env then
       return false
    end
 
    overrides.theme_mode = mode
    overrides.colors = M.get_colors(mode)
+   overrides.set_environment_variables.ZSH_THEME_MODE = mode
+   overrides.set_environment_variables.NVIM_THEME = mode
    window:set_tab_config_overrides(tab, overrides)
    return true
 end
